@@ -1,0 +1,10 @@
+{
+  "subscribers": [
+    {
+      "email": "somemail.se",
+      "filters": [
+        "fries"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "resturant": "Vesterbrunn",
+  "week": "39",
+  "days": [
+    {
+      "day": "Måndag",
+      "lunches": [
+        "Pannbiff med stekt lök gräddsås kokt potatis inlagd gurka och lingon",
+        "Spenat och ricotta tortellini i citronsås",
+        "Pocherad torsk med dill och citronsås med kokt potatis",
+        "Ceasarsallad med kyckling och bacon"
+      ]
+    },
+    {
+      "day": "Tisdag",
+      "lunches": [
+        "Fetaostfyllda kycklinglårfiléer med soltorkad tomatsås och ris",
+        "Vegetarisk boeuf bourguignon med ris",
+        "Räkfylld spätta med hummersås och kokt potatis",
+        "Laxsallad med myntayoghurt"
+      ]
+    },
+    {
+      "day": "Onsdag",
+      "lunches": [
+        "Skånsk kalops med kokt potatis och inlagda rödbetor",
+        "Morot och halloumibiff med ris och ingefärsdressing",
+        "Pocherad torsk med dill och citronsås med kokt potatis",
+        "Ceasarsallad med kyckling och bacon"
+      ]
+    },
+    {
+      "day": "Torsdag",
+      "lunches": [
+        "Viltfärslimpa med kantarellsås potatismos och lingon",
+        "Vegetarisk boeuf bourguignon med ris",
+        "Räkfylld spätta med hummersås och kokt potatis",
+        "Laxsallad med myntayoghurt"
+      ]
+    },
+    {
+      "day": "Fredag",
+      "lunches": [
+        "Ostpanerad schnitzel med klyftpotatis rödvinssås och bearnaise",
+        "Morot och halloumibiff med ris och ingefärsdressing",
+        "Fisk och skaldjursgryta med kokt potatis",
+        "Räksallad med kokt ägg"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "s3Bucket": "",
+  "localDirectory": "",
+  "webpageFile": "",
+  "subscriptionsFile": "subscriptions.json",
+  "webpageEmail": "",
+  "menuFiles": [
+    "example.json"
+  ],
+  "defaultFilters": [
+    "burgare"
+  ]
+}

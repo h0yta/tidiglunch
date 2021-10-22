@@ -1,0 +1,26 @@
+{
+  "name": "lunch",
+  "version": "1.0.0",
+  "description": "Tidig lunch?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/web-api": "^5.3.0",
+    "assert": "^2.0.0",
+    "aws-sdk": "^2.998.0",
+    "cheerio": "1.0.0-rc.2",
+    "commander": "^2.11.0",
+    "dateformat": "3.0.2",
+    "iconv-lite": "^0.4.21",
+    "minimist": "1.2.0",
+    "npm": "^6.0.0",
+    "promise": "7.1.1",
+    "puppeteer": "^2.0.0",
+    "request": "2.79.0",
+    "string-similarity": "^1.2.0"
+  }
+}

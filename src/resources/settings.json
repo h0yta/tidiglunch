@@ -1,0 +1,14 @@
+{
+  "s3Bucket": "https://tidiglunch.s3.eu-central-1.amazonaws.com/",
+  "localDirectory": "/var/flags/",
+  "webpageFile": ".lunch",
+  "subscriptionsFile": "subscriptions.json",
+  "webpageEmail": "tidiglunch.se",
+  "menuFiles": [
+    "vesterbrunn.json"
+  ],
+  "defaultFilters": [
+    "burgare",
+    "dillkött"
+  ]
+}

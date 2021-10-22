@@ -1,0 +1,20 @@
+{
+  "subscribers": [
+    {
+      "email": "tidiglunch.se",
+      "filters": null
+    },
+    {
+      "email": "oscar@vettig.se",
+      "filters": [
+        "kantarellsås"
+      ]
+    },
+    {
+      "email": "phkall@gmail.com",
+      "filters": [
+        "dillkött"
+      ]
+    }
+  ]
+}
