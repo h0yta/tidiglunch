@@ -18,45 +18,47 @@ const run = async () => {
 
 const parse = async () => {
   let browser;
-  try {
-    browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
 
-    let html = await page.content();
-    let $ = cheerio.load(html);
+  return new Promise(async (resolve, reject) => {
+    try {
+      browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(url);
 
-    let result = { resturant: 'Vesterbrunn', week: 0, days: [] };
-    let weekday = -1;
-    let widget = $('div[data-element_type="widget"]');
-    widget.children().each((i, elem) => {
-      let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
-      if (text.includes('Lunch V.')) {
-        result.week = parseWeek(text);
-      }
+      let html = await page.content();
+      let $ = cheerio.load(html);
 
-      if (weekdays.indexOf(text) >= 0) {
-        weekday = weekdays.indexOf(text);
-      } else if (weekday > -1) {
-        let lunches = [];
-        $(elem).find('p').each((i, pElem) => {
-          lunches.push($(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim())
-        })
-        result.days.push({
-          day: weekdays[weekday],
-          lunches: lunches
-        })
-        weekday = -1;
-      }
-    });
+      let result = { resturant: 'Vesterbrunn', week: 0, days: [] };
+      let weekday = -1;
+      let widget = $('div[data-element_type="widget"]');
+      widget.children().each((i, elem) => {
+        let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
+        if (text.includes('Lunch V.')) {
+          result.week = parseWeek(text);
+        }
 
-    browser.close();
-    return result;
+        if (weekdays.indexOf(text) >= 0) {
+          weekday = weekdays.indexOf(text);
+        } else if (weekday > -1) {
+          let lunches = [];
+          $(elem).find('p').each((i, pElem) => {
+            lunches.push($(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim())
+          })
+          result.days.push({
+            day: weekdays[weekday],
+            lunches: lunches
+          })
+          weekday = -1;
+        }
+      });
 
-  } catch (error) {
-    browser.close();
-    console.log(' Error in VesterbrunnParser', error);
-  }
+      resolve(result);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 }
 
 const parseWeek = (text) => {
