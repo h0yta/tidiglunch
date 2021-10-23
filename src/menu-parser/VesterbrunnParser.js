@@ -22,7 +22,8 @@ const parse = async () => {
     try {
       const browser = await puppeteer.launch({
         headless: true,
-        args: ['--use-gl=egl'],
+        executablePath: '/usr/bin/chromium-browser',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
       await page.goto(url);
