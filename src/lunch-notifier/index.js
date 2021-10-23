@@ -10,7 +10,6 @@ const run = async () => {
   let notifications = getNotifications(subscriptions, menus, settings);
 
   webpageNotifier.notify(notifications);
-
 }
 
 const getNotifications = (subscriptions, menus, settings) => {
@@ -59,11 +58,11 @@ const anyMatch = (string, filters, defaultFilters) => {
 }
 
 const getSettings = () => {
-  return JSON.parse(fs.readFileSync(__dirname + '/settings.json'));
+  return JSON.parse(fs.readFileSync(__dirname + '/../resources/settings.json'));
 }
 
 const getSubscriptions = () => {
-  return JSON.parse(fs.readFileSync(__dirname + '/subscriptions.json'));
+  return JSON.parse(fs.readFileSync(__dirname + '/../resources/subscriptions.json'));
 }
 
 const getMenus = async (settings) => {
