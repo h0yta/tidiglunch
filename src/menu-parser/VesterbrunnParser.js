@@ -50,12 +50,12 @@ const parse = async () => {
       }
     });
 
+    browser.close();
     return result;
 
   } catch (error) {
+    browser.close();
     console.log(' Error in VesterbrunnParser', error);
-  } finally {
-    await browser.close();
   }
 }
 
