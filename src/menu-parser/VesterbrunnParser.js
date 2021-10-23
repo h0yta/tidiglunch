@@ -6,12 +6,14 @@ const url = 'http://vesterbrunn.se/lunch';
 const weekdays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag'];
 
 const run = async () => {
-
-  let json = await parse();
-  verifyJson(json);
-  storeJsonInS3(json);
-  printJson(json);
-
+  try {
+    let json = await parse();
+    verifyJson(json);
+    storeJsonInS3(json);
+    printJson(json);
+  } catch (error) {
+    console.log(' Error in VesterbrunnParser', error);
+  }
 }
 
 const parse = async () => {
