@@ -6,7 +6,6 @@ const launchBrowser = async () => {
     console.log('YO U runnin local');
     return await puppeteer.launch();
   } else if (platform === 'linux') {
-    console.log('See you on the serverside');
     return await puppeteer.launch({
       headless: true,
       executablePath: '/usr/bin/chromium-browser',
