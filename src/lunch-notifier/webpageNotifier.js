@@ -10,8 +10,7 @@ const notify = async (notifications) => {
     .flatMap(notification => notification.notifications)
     .filter(notification => notification.day === currentDay)
     .flatMap(notification => notification.matches)
-    .reduce((a, b) => a + b + '\n ', '')
-    .trim();
+    .join('\n');
   saveFile(settings.localDirectory, settings.webpageFile, webString)
 }
 
