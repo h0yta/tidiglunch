@@ -2,7 +2,10 @@
   "subscribers": [
     {
       "email": "tidiglunch.se",
-      "filters": null
+      "filters": [
+        "burgare",
+        "pulled pork"
+      ]
     },
     {
       "email": "oscar@vettig.se",
