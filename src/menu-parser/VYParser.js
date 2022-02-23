@@ -1,11 +1,12 @@
 const fs = require('fs');
 const cheerio = require('cheerio');
 const assert = require('assert').strict;
+const dateUtils = require('../utils/dateUtils');
+const menuUtils = require('../utils/menuUtils');
 const puppeteerUtils = require('../utils/puppeteerUtils');
 
-
 const url = 'https://fcgruppen.se/restauranger/vy-restaurang-skybar';
-const weekdays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag'];
+const RESTURANT_NAME = 'VY';
 
 const run = async () => {
   let settings = getSettings();
@@ -15,9 +16,10 @@ const run = async () => {
     verifyJson(json);
     storeJsonInS3(json);
     printJson(json);
-    saveJson(settings.localDirectory, 'vy.json', json);
+    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', json);
   } catch (error) {
     console.log(' Error in VYParser', error);
+    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', menuUtils.createEmptyJson(RESTURANT_NAME));
   }
 }
 
@@ -31,8 +33,9 @@ const parse = async () => {
     let html = await page.content();
     let $ = cheerio.load(html);
 
-    let result = { resturant: 'VY', week: 0, days: [] };
+    let result = { resturant: RESTURANT_NAME, week: 0, days: [] };
     let widget = $('.category-lunch_vy');
+    let lunchArray = new Array();
     widget.children().first().children().each((i, elem) => {
       let html = $(elem).html()
         .replace(/\<br\>/g, '#')
@@ -41,26 +44,37 @@ const parse = async () => {
         .text()
         .split('#');
 
-      if (lunchText[0].includes('Vecka')) {
-        result.week = parseWeek(lunchText[0]);
-      } else if (weekdays.indexOf(lunchText[0]) >= 0) {
-        let weekday = weekdays.indexOf(lunchText[0]);
+      lunchArray = lunchArray.concat(lunchText);
+    });
 
-        let lunches = [];
-        for (let i = 1; i < lunchText.length; i++) {
-          lunches.push(lunchText[i].replace(/\(.*\)/, '').trim())
+    let weekday = '';
+    let lunches = [];
+    for (let i = 0; i < lunchArray.length; i++) {
+      if (lunchArray[i].includes('Vecka')) {
+        result.week = parseWeek(lunchArray[i]);
+      } else if (dateUtils.isValidDay(lunchArray[i])) {
+        if (weekday !== '' && lunches.length > 0) {
+          result.days.push({
+            day: weekday,
+            lunches
+          });
         }
 
-        result.days.push({
-          day: weekdays[weekday],
-          lunches
-        });
+        weekday = lunchArray[i];
+        lunches = [];
+      } else if (!lunchArray[i].startsWith('*')) {
+        lunches.push(lunchArray[i].replace(/\(.*\)/, '').trim());
       }
+    }
+
+    result.days.push({
+      day: weekday,
+      lunches
     });
 
     return result;
   } catch (error) {
-    console.log(' Error in VesterbrunnParser', error);
+    console.log(' Error in VYParser', error);
   } finally {
     await browser.close();
   }
@@ -76,7 +90,7 @@ const verifyJson = (json) => {
   assert(json.days.length === 5, 'Days does not have five entries: ' + json.days.length);
 
   json.days.forEach(day => {
-    assert(weekdays.includes(day.day), 'Invalid day: ' + day.day);
+    assert(dateUtils.isValidDay(day.day), 'Invalid day: ' + day.day);
     assert(Array.isArray(day.lunches), 'Lunches is not an array');
     assert(day.lunches.length === 3, 'Lunches does not have three entries: ' + day.lunches.length);
   });

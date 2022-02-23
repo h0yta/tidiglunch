@@ -1,11 +1,13 @@
 const fs = require('fs');
 const cheerio = require('cheerio');
 const assert = require('assert').strict;
+const dateUtils = require('../utils/dateUtils');
+const menuUtils = require('../utils/menuUtils');
 const puppeteerUtils = require('../utils/puppeteerUtils');
 
 
 const url = 'http://vesterbrunn.se/lunch';
-const weekdays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag'];
+const RESTURANT_NAME = 'Vesterbrunn';
 
 const run = async () => {
   let settings = getSettings();
@@ -15,9 +17,10 @@ const run = async () => {
     verifyJson(json);
     storeJsonInS3(json);
     printJson(json);
-    saveJson(settings.localDirectory, 'vesterbrunn.json', json);
+    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', json);
   } catch (error) {
     console.log(' Error in VesterbrunnParser', error);
+    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', menuUtils.createEmptyJson(RESTURANT_NAME));
   }
 }
 
@@ -32,7 +35,7 @@ const parse = async () => {
     let $ = cheerio.load(html);
 
     let result = { resturant: 'Vesterbrunn', week: 0, days: [] };
-    let weekday = -1;
+    let weekday = '';
     let widget = $('div[data-element_type="widget"]');
     widget.children().each((i, elem) => {
       let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
@@ -40,18 +43,18 @@ const parse = async () => {
         result.week = parseWeek(text);
       }
 
-      if (weekdays.indexOf(text) >= 0) {
-        weekday = weekdays.indexOf(text);
-      } else if (weekday > -1) {
+      if (dateUtils.isValidDay(text)) {
+        weekday = text;
+      } else if (weekday != '') {
         let lunches = [];
         $(elem).find('p').each((i, pElem) => {
           lunches.push($(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim())
-        })
+        });
         result.days.push({
-          day: weekdays[weekday],
+          day: weekday,
           lunches: lunches
-        })
-        weekday = -1;
+        });
+        weekday = '';
       }
     });
 
@@ -74,7 +77,7 @@ const verifyJson = (json) => {
   assert(json.days.length === 5, 'Days does not have five entries: ' + json.days.length);
 
   json.days.forEach(day => {
-    assert(weekdays.includes(day.day), 'Invalid day: ' + day.day);
+    assert(dateUtils.isValidDay(day.day), 'Invalid day: ' + day.day);
     assert(Array.isArray(day.lunches), 'Lunches is not an array');
     assert(day.lunches.length === 4, 'Lunches does not have four entries: ' + day.lunches.length);
   });
@@ -96,7 +99,6 @@ const printJson = (json) => {
 
 const saveJson = (directory, filename, json) => {
   return fs.writeFileSync(directory + filename, JSON.stringify(json, null, 2));
-
 }
 
 module.exports.run = run;
