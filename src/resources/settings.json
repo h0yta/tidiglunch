@@ -5,8 +5,8 @@
   "subscriptionsFile": "subscriptions.json",
   "webpageEmail": "tidiglunch.se",
   "menuFiles": [
-    "vesterbrunn.json",
-    "vy.json"
+    "Vesterbrunn.json",
+    "VY.json"
   ],
   "defaultFilters": [
     "burgare",
