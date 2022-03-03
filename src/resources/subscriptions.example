@@ -1,9 +1,10 @@
 {
   "subscribers": [
     {
-      "email": "somemail.se",
+      "email": "tidiglunch.se",
       "filters": [
-        "fries"
+        "burgare",
+        "pulled pork"
       ]
     }
   ]
