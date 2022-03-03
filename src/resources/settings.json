@@ -4,6 +4,9 @@
   "webpageFile": ".lunch",
   "subscriptionsFile": "subscriptions.json",
   "webpageEmail": "tidiglunch.se",
+  "skipVerify": true,
+  "skipPrint": true,
+  "skipSave": true,
   "menuFiles": [
     "Vesterbrunn.json",
     "VY.json"

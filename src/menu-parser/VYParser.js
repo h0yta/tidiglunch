@@ -13,13 +13,13 @@ const run = async () => {
 
   try {
     let json = await parse();
-    verifyJson(json);
-    storeJsonInS3(json);
-    printJson(json);
-    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', json);
+    verifyJson(json, settings);
+    storeJsonInS3(json, settings);
+    printJson(json, settings);
+    saveJson(RESTURANT_NAME + '.json', json, settings);
   } catch (error) {
     console.log(' Error in VYParser', error);
-    saveJson(settings.localDirectory, RESTURANT_NAME + '.json', menuUtils.createEmptyJson(RESTURANT_NAME));
+    saveJson(RESTURANT_NAME + '.json', menuUtils.createEmptyJson(RESTURANT_NAME), settings);
   }
 }
 
@@ -39,7 +39,7 @@ const parse = async () => {
     widget.children().first().children().each((i, elem) => {
       let html = $(elem).html()
         .replace(/\<br\>/g, '#')
-        .replace(':', '');
+        .replace(/:/g, '');
       let lunchText = cheerio.load(html)
         .text()
         .split('#');
@@ -62,7 +62,7 @@ const parse = async () => {
 
         weekday = lunchArray[i];
         lunches = [];
-      } else if (!lunchArray[i].startsWith('*')) {
+      } else if (isValidLunch(lunchArray[i])) {
         lunches.push(lunchArray[i].replace(/\(.*\)/, '').trim());
       }
     }
@@ -84,7 +84,16 @@ const parseWeek = (text) => {
   return text.trim().split(' ')[1];
 }
 
-const verifyJson = (json) => {
+const isValidLunch = (text) => {
+  return !text.startsWith('*') && text.trim() !== '';
+}
+
+const verifyJson = (json, settings) => {
+  if (settings.skipVerify) {
+    console.log('Skipping VERIFY');
+    return
+  };
+
   assert(!isNaN(json.week), 'Week is not a number: ' + json.week);
   assert(Array.isArray(json.days), 'Days is not an array');
   assert(json.days.length === 5, 'Days does not have five entries: ' + json.days.length);
@@ -96,23 +105,32 @@ const verifyJson = (json) => {
   });
 }
 
-const getSettings = () => {
-  return JSON.parse(fs.readFileSync(__dirname + '/../resources/settings.json'));
-}
-
 const storeJsonInS3 = (json) => {
   // TODO Implement
   return;
 }
 
-const printJson = (json) => {
+const printJson = (json, settings) => {
+  if (settings.skipPrint) {
+    console.log('Skipping PRINT');
+    return;
+  }
+
   console.log(JSON.stringify(json, null, 2));
   return;
 }
 
-const saveJson = (directory, filename, json) => {
-  return fs.writeFileSync(directory + filename, JSON.stringify(json, null, 2));
+const saveJson = (filename, json, settings) => {
+  if (settings.skipSave) {
+    console.log('Skipping SAVE');
+    return;
+  }
 
+  return fs.writeFileSync(settings.localDirectory + filename, JSON.stringify(json, null, 2));
+}
+
+const getSettings = () => {
+  return JSON.parse(fs.readFileSync(__dirname + '/../resources/settings.json'));
 }
 
 module.exports.run = run;
