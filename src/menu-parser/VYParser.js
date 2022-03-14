@@ -38,8 +38,12 @@ const parse = async () => {
     let lunchArray = new Array();
     widget.children().first().children().each((i, elem) => {
       let html = $(elem).html()
-        .replace(/\<br\>/g, '#')
-        .replace(/:/g, '');
+        .split(/(Måndag|Tisdag|Onsdag|Torsdag|Fredag)/g)
+        .map(text => text
+          .replace(/\<br\>/g, '#')
+          .replace('*', '#')
+          .replace(/:/g, ''))
+        .join('#');
       let lunchText = cheerio.load(html)
         .text()
         .split('#');
@@ -85,7 +89,11 @@ const parseWeek = (text) => {
 }
 
 const isValidLunch = (text) => {
-  return !text.startsWith('*') && text.trim() !== '';
+  return text.trim() !== ''
+    && !text.trim().startsWith('*')
+    && !text.trim().startsWith('=')
+    && !text.trim().startsWith('(')
+    && !text.trim().startsWith(')');
 }
 
 const verifyJson = (json, settings) => {
