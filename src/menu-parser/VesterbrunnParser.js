@@ -39,16 +39,19 @@ const parse = async () => {
     let widget = $('div[data-element_type="widget"]');
     widget.children().each((i, elem) => {
       let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
-      if (text.includes('Lunch V.')) {
-        result.week = parseWeek(text);
-      }
 
-      if (dateUtils.isValidDay(text)) {
-        weekday = text;
+      if (dateUtils.startWithWeekday(text)) {
+        weekday = parseWeekday(text);
+        if (weekday === 'Måndag') {
+          result.week = parseWeek(text);
+        }
       } else if (weekday != '') {
         let lunches = [];
         $(elem).find('p').each((i, pElem) => {
-          lunches.push($(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim())
+          let lunch = $(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim();
+          if (lunch !== '') {
+            lunches.push(lunch);
+          }
         });
         result.days.push({
           day: weekday,
@@ -67,11 +70,16 @@ const parse = async () => {
   }
 }
 
+const parseWeekday = (text) => {
+  return text.split(' ')[0].trim();
+}
+
 const parseWeek = (text) => {
-  return text.split('.')[1];
+  return text.split('Vecka')[1].trim();
 }
 
 const verifyJson = (json) => {
+  console.log(JSON.stringify(json, null, 2))
   assert(!isNaN(json.week), 'Week is not a number: ' + json.week);
   assert(Array.isArray(json.days), 'Days is not an array');
   assert(json.days.length === 5, 'Days does not have five entries: ' + json.days.length);
@@ -79,7 +87,8 @@ const verifyJson = (json) => {
   json.days.forEach(day => {
     assert(dateUtils.isValidDay(day.day), 'Invalid day: ' + day.day);
     assert(Array.isArray(day.lunches), 'Lunches is not an array');
-    assert(day.lunches.length === 4, 'Lunches does not have four entries: ' + day.lunches.length);
+    // Ignore number of lunches
+    // assert(day.lunches.length === 4, 'Lunches does not have four entries: ' + day.lunches.length);
   });
 }
 

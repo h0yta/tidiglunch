@@ -46,7 +46,12 @@ const isValidDay = (text) => {
   return getDays().includes(text);
 }
 
+const startWithWeekday = (text) => {
+  return getDays().filter(day => text.indexOf(day) === 0).length > 0;
+}
+
 module.exports.currentWeekNumber = currentWeekNumber;
 module.exports.isValidDay = isValidDay;
+module.exports.startWithWeekday = startWithWeekday;
 module.exports.getDays = getDays;
 module.exports.getDays = getDays;
