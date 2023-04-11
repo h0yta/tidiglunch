@@ -4,11 +4,12 @@ const weekdays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag',
 const notify = async (notifications) => {
   let settings = getSettings();
   let currentDay = getCurrentDay();
-  let webString = notifications.filter(notification =>
-    notification.email === settings.webpageEmail)
+  let webString = notifications
+    .filter(notification => notification.email === settings.webpageEmail)
     .flatMap(notification => notification.notifications)
     .filter(notification => notification.day === currentDay)
-    .flatMap(notification => notification.matches.map(match => match + ' (' + notification.resturant + ')'))
+    .flatMap(notification => notification.highlightedMatches
+      .map(match => match + ' (' + notification.resturant + ')'))
     .join('\n');
   saveFile(settings.localDirectory, settings.webpageFile, webString)
 }

@@ -9,6 +9,8 @@ const run = async () => {
   let menus = await getMenus(settings);
   let notifications = getNotifications(subscriptions, menus, settings);
 
+  console.log(JSON.stringify(notifications, null, 2));
+
   webpageNotifier.notify(notifications);
 }
 
@@ -16,16 +18,21 @@ const getNotifications = (subscriptions, menus, settings) => {
   return subscriptions.subscribers.flatMap(sub => {
     let subNotifications = menus.flatMap(menu => {
       return menu.days.map(day => {
-        let matchingLunches = day.lunches.filter(lunch => anyMatch(lunch, sub.filters, settings.defaultFilters));
+        let matchingLunches = day.lunches
+          .filter(lunch => anyMatch(lunch, sub.filters, settings.defaultFilters));
 
         if (matchingLunches.length === 0) {
           return null;
         }
 
+        let highlightedLunches = matchingLunches
+          .map(lunch => createHighlightedLunch(lunch, sub.filters, settings.defaultFilters));
+
         return {
           resturant: menu.resturant,
           day: day.day,
-          matches: matchingLunches
+          matches: matchingLunches,
+          highlightedMatches: highlightedLunches
         }
       }).filter(dayNotification => dayNotification !== null);
     });
@@ -41,20 +48,32 @@ const getNotifications = (subscriptions, menus, settings) => {
   }).filter(notification => notification !== null);
 }
 
-const anyMatch = (string, filters, defaultFilters) => {
+const anyMatch = (lunch, filters, defaultFilters) => {
   let personalMatch = false;
   if (filters !== undefined && filters !== null) {
     personalMatch = filters
-      .filter(filter => string.toLowerCase().includes(filter.toLowerCase()))
-      .length > 0;
+      .some(filter => lunch.toLowerCase().includes(filter.toLowerCase()));
   }
 
   let defaultMatch = defaultFilters
-    .filter(filter => string.toLowerCase().includes(filter.toLowerCase()))
-    .length > 0;
-
+    .some(filter => lunch.toLowerCase().includes(filter.toLowerCase()));
 
   return personalMatch || defaultMatch;
+}
+
+const createHighlightedLunch = (lunch, filters, defaultFilters) => {
+  let highlightedLunch = lunch;
+  if (filters !== undefined && filters !== null) {
+    filters.forEach(filter => {
+      highlightedLunch = highlightedLunch.replace(filter, '<u>' + filter + '</u>');
+    });
+  }
+
+  defaultFilters.forEach(filter => {
+    highlightedLunch = highlightedLunch.replace(filter, '<u>' + filter + '</u>');
+  });
+
+  return highlightedLunch;
 }
 
 const getSettings = () => {
