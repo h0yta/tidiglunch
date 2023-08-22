@@ -75,7 +75,11 @@ const parseWeekday = (text) => {
 }
 
 const parseWeek = (text) => {
-  return text.split('Vecka')[1].trim();
+  if (text.includes('Vecka')) {
+    return text.split('Vecka')[1].trim();
+  } else {
+    return dateUtils.currentWeekNumber(new Date());
+  }
 }
 
 const verifyJson = (json) => {
