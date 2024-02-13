@@ -2,6 +2,7 @@ const program = require('commander');
 
 const vesterbrunnParser = require('./VesterbrunnParser');
 const vyParser = require('./VYParser');
+const tokakokParser = require('./TokaKok');
 
 const init = async () => {
   program
@@ -27,6 +28,9 @@ const runParser = async (parser) => {
     case 'VY':
       await runVY();
       break;
+    case 'TOKAKOK':
+      await runTokaKok();
+      break;
     default:
       await runVesterbrunn();
       await runVY();
@@ -47,6 +51,14 @@ const runVY = async () => {
     await vyParser.run();
   } catch (error) {
     console.log(' Error in vyParser', error);
+  }
+}
+
+const runTokaKok = async () => {
+  try {
+    await tokakokParser.run();
+  } catch (error) {
+    console.log(' Error in tokakokParser', error);
   }
 }
 
