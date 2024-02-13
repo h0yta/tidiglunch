@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const { platform } = require('process');
 
 const launchBrowser = async () => {
-  if (platform === 'darwin') {
+  if (platform === 'darwin' || platform === 'win32') {
     console.log('YO U runnin local');
     return await puppeteer.launch();
   } else if (platform === 'linux') {

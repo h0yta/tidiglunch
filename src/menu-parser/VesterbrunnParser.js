@@ -40,7 +40,7 @@ const parse = async () => {
     widget.children().each((i, elem) => {
       let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
 
-      if (dateUtils.startWithWeekday(text)) {
+      if (dateUtils.isValidDay(text)) {
         weekday = parseWeekday(text);
         if (weekday === 'Måndag') {
           result.week = parseWeek(text);
