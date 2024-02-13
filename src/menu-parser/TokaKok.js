@@ -7,7 +7,7 @@ const puppeteerUtils = require('../utils/puppeteerUtils');
 
 
 const url = 'https://www.tokakok.com/lunch-meny';
-const RESTURANT_NAME = 'Toka Kök';
+const RESTURANT_NAME = 'TokaKok';
 
 const run = async () => {
   let settings = getSettings();
