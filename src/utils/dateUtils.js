@@ -43,7 +43,7 @@ const getDays = () => {
 }
 
 const isValidDay = (text) => {
-  return getDays().includes(text);
+  return text.split(' ').filter(t => getDays().includes(t)).length === 1;
 }
 
 const startWithWeekday = (text) => {

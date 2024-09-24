@@ -8,6 +8,7 @@ const puppeteerUtils = require('../utils/puppeteerUtils');
 
 const url = 'http://vesterbrunn.se/lunch';
 const RESTURANT_NAME = 'Vesterbrunn';
+const SPECIALS = ['FISK', 'VEGETARISK', 'SALLAD'];
 
 const run = async () => {
   let settings = getSettings();
@@ -36,6 +37,7 @@ const parse = async () => {
 
     let result = { resturant: 'Vesterbrunn', week: 0, days: [] };
     let weekday = '';
+    let special = '';
     let widget = $('div[data-element_type="widget"]');
     widget.children().each((i, elem) => {
       let text = $(elem).text().trim().replace(/–/g, '\n').replace(/-/g, '\n');
@@ -50,7 +52,7 @@ const parse = async () => {
         $(elem).find('p').each((i, pElem) => {
           let lunch = $(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim();
           if (lunch !== '') {
-            lunches.push(lunch);
+            lunches.push(parseLunch(lunch));
           }
         });
         result.days.push({
@@ -58,6 +60,17 @@ const parse = async () => {
           lunches: lunches
         });
         weekday = '';
+      } else if (SPECIALS.includes(text.toUpperCase())) {
+        special = text.toUpperCase();
+      } else if (special != '') {
+        $(elem).find('p').each((i, pElem) => {
+          let lunch = $(pElem).text().replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '').trim();
+          if (lunch !== '') {
+            result.days
+              .forEach(day => day.lunches.push(parseLunch(lunch)));
+          }
+        });
+        special = '';
       }
     });
 
@@ -80,6 +93,13 @@ const parseWeek = (text) => {
   } else {
     return dateUtils.currentWeekNumber(new Date());
   }
+}
+
+const parseLunch = (text) => {
+  return text
+    .replace('GF', '')
+    .replace('LF', '')
+    .trim();
 }
 
 const verifyJson = (json) => {
