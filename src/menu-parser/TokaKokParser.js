@@ -19,7 +19,7 @@ const run = async () => {
     printJson(json);
     saveJson(settings.localDirectory, RESTURANT_NAME + '.json', json);
   } catch (error) {
-    console.log(' Error in VesterbrunnParser', error);
+    console.log(' Error in TokaKokParser', error);
     saveJson(settings.localDirectory, RESTURANT_NAME + '.json', menuUtils.createEmptyJson(RESTURANT_NAME));
   }
 }
