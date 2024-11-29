@@ -39,6 +39,9 @@ const parse = async () => {
     let parseVeckans = false;
     let veckans = []
     let lunches = [];
+
+    result.week = parseWeek($('.menu_date').text());
+
     let widget = $('.menu_text');
     let parts = widget.html()
       .split('<br>')
@@ -74,6 +77,10 @@ const parse = async () => {
   } finally {
     await browser.close();
   }
+}
+
+const parseWeek = (text) => {
+  return text.trim().split(' ')[1].replace('v', '');
 }
 
 const parseWeekday = (text) => {
